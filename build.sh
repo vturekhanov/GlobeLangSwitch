@@ -10,7 +10,7 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" build/tmp
 export TMPDIR="$PWD/build/tmp"  # keep compiler temporary files inside the project
 
-plutil -lint -s Info.plist Resources/*.lproj/*.strings
+plutil -lint -s Info.plist GlobeLangSwitch.entitlements Resources/*.lproj/*.strings
 cp Info.plist "$APP/Contents/"
 cp -R Resources/ "$APP/Contents/Resources/"
 
@@ -24,10 +24,13 @@ xcrun swiftc -swift-version 6 -parse-as-library -warnings-as-errors -O \
     -Xlinker -no_adhoc_codesign \
     Sources/*.swift -o "$APP/Contents/MacOS/GlobeLangSwitch"
 
+# App Sandbox with one exception: TISSelectInputSource called from a background app must reach the
+# focused app's com.apple.tsm.portname; when it can't, the focused app restores its own layout.
 if [ -n "${SIGN_IDENTITY:-}" ]; then
-    codesign --sign "$SIGN_IDENTITY" --options runtime --timestamp "$APP"
+    codesign --sign "$SIGN_IDENTITY" --options runtime --timestamp \
+        --entitlements GlobeLangSwitch.entitlements "$APP"
 else
-    codesign --sign - "$APP"
+    codesign --sign - --entitlements GlobeLangSwitch.entitlements "$APP"
 fi
 codesign --verify --strict "$APP"
 echo "Built $APP"
