@@ -86,6 +86,8 @@ It only receives changes of the modifier keys (Shift, Control, Option, Command, 
 
 Future versions of macOS may stop delivering these events. If that happens, the menu will show **Not receiving key events** and an "!" sign will appear next to the globe icon in the menu bar.
 
+GlobeLangSwitch runs in the App Sandbox, without access to the network or your files.
+
 ## Limitations
 
 - **Open and Save dialogs.** If **Automatically switch to a document's input source** is on (System Settings › Keyboard › Input Sources › Edit…), the layout doesn't switch in these dialogs, because macOS restores the layout it remembers for them. Turn the setting off if this matters to you. The system shortcut ⌃⌥Space works there either way.
@@ -98,12 +100,7 @@ Future versions of macOS may stop delivering these events. If that happens, the 
 1. In the GlobeLangSwitch menu, turn off **Launch at Login** if you turned it on.
 2. Choose **Quit GlobeLangSwitch**.
 3. Move **GlobeLangSwitch** from the Applications folder to the Trash.
-4. Optionally, delete the saved tap threshold setting by running this command in Terminal:
-
-   ```bash
-   defaults delete org.turekhanov.GlobeLangSwitch
-   ```
-
+4. Optionally, delete the saved tap threshold setting: in Finder, choose **Go › Go to Folder…**, enter `~/Library/Containers`, and move the **GlobeLangSwitch** folder to the Trash.
 5. Optionally, open **System Settings › Keyboard** and set **Press 🌐 key to** back to the option you used before installing GlobeLangSwitch.
 
 ## License
