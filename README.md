@@ -13,7 +13,13 @@ macOS can switch input sources with the Globe key by itself, but it can be slow:
 
 ### Download
 
-Ready-made builds are not available yet. For now, build the app from source.
+1. Download the **.dmg** file from the [latest release](https://github.com/vturekhanov/GlobeLangSwitch/releases/latest).
+2. Open it and drag **GlobeLangSwitch** to the **Applications** folder in the window that appears.
+3. Open the Applications folder in Finder and double-click **GlobeLangSwitch**. macOS asks whether you want to open an app downloaded from the internet: click **Open**. The app is signed with a Developer ID and notarized by Apple. A globe icon appears in the menu bar.
+
+Start the app from the Applications folder, not from the disk image: Launch at Login remembers where the app is.
+
+To update, quit GlobeLangSwitch, then drag the new version to Applications and choose **Replace**.
 
 ### Build from source
 
