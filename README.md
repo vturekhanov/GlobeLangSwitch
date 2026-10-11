@@ -23,15 +23,25 @@ You need the Xcode Command Line Tools. Open Terminal and, if they aren't install
 xcode-select --install
 ```
 
-Then go to the project folder and run:
+Then download the source and build the app:
 
 ```bash
+git clone https://github.com/vturekhanov/GlobeLangSwitch.git
+cd GlobeLangSwitch
+./build.sh
+```
+
+When updating, get the latest source in the existing folder instead of cloning it again:
+
+```bash
+cd GlobeLangSwitch
+git pull
 ./build.sh
 ```
 
 This creates `build/GlobeLangSwitch.app`, signed ad hoc for the Mac it was built on. The script doesn't launch the app.
 
-When updating, quit the running copy first, and remove the old app instead of copying over it: macOS may refuse to launch a signed app that was overwritten in place. Dragging the app to Applications in Finder and choosing **Replace** works too.
+Before copying a new build, quit the running copy first, and remove the old app instead of copying over it: macOS may refuse to launch a signed app that was overwritten in place. Dragging the app to Applications in Finder and choosing **Replace** works too.
 
 Copy the app to Applications. The first command removes a previous version, if there is one:
 
