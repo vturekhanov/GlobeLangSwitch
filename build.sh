@@ -1,0 +1,33 @@
+#!/bin/sh
+# Builds build/GlobeLangSwitch.app using only Xcode Command Line Tools. Never launches the app.
+# Signs ad hoc by default; with SIGN_IDENTITY="Developer ID Application: …" signs with that
+# certificate, the hardened runtime and a secure timestamp (contacts Apple's timestamp server).
+set -eu
+cd "$(dirname "$0")"
+
+APP=build/GlobeLangSwitch.app
+rm -rf "$APP"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" build/tmp
+export TMPDIR="$PWD/build/tmp"  # keep compiler temporary files inside the project
+
+plutil -lint -s Info.plist Resources/*.lproj/*.strings
+cp Info.plist "$APP/Contents/"
+cp -R Resources/ "$APP/Contents/Resources/"
+
+# App icon, drawn by Icon/make-icon.swift.
+xcrun swiftc -swift-version 6 -warnings-as-errors -O -module-cache-path build/ModuleCache \
+    Icon/make-icon.swift -o build/make-icon
+build/make-icon "$APP/Contents/Resources/AppIcon.icns"
+
+xcrun swiftc -swift-version 6 -parse-as-library -warnings-as-errors -O \
+    -target arm64-apple-macos13.0 -module-cache-path build/ModuleCache \
+    -Xlinker -no_adhoc_codesign \
+    Sources/*.swift -o "$APP/Contents/MacOS/GlobeLangSwitch"
+
+if [ -n "${SIGN_IDENTITY:-}" ]; then
+    codesign --sign "$SIGN_IDENTITY" --options runtime --timestamp "$APP"
+else
+    codesign --sign - "$APP"
+fi
+codesign --verify --strict "$APP"
+echo "Built $APP"

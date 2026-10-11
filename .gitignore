@@ -1,0 +1,7 @@
+build/
+.claude/
+settings.local.json
+.DS_Store
+maintainer/
+tmp/
+CLAUDE.md

@@ -1,0 +1,28 @@
+/* All user-visible strings. To add a language, copy this file to <language>.lproj/ and translate the values. */
+
+"app.name" = "GlobeLangSwitch";
+
+/* Status lines at the top of the menu */
+"status.working" = "Working";
+"status.paused" = "Paused";
+"status.noEvents" = "Not receiving key events";
+"status.noEventsHint" = "macOS may now require a permission";
+/* Shown next to the globe in the menu bar when something prevents normal work */
+"status.problemMark" = "!";
+
+/* Conflicts with the system setting "Press 🌐 key to" */
+"globe.changesInputSource" = "macOS also changes the input source on 🌐";
+"globe.showsEmoji" = "macOS also shows Emoji & Symbols on 🌐";
+"globe.startsDictation" = "macOS also starts Dictation on 🌐";
+"globe.mayReact" = "macOS may also react to 🌐";
+"globe.fix" = "Set System Settings › Keyboard › Press 🌐 key to › Do Nothing";
+
+/* Launch at login */
+"login.approval" = "Allow GlobeLangSwitch in System Settings › General › Login Items";
+
+/* Menu commands. %ld is the threshold in milliseconds. */
+"menu.pause" = "Pause";
+"menu.threshold" = "Tap threshold: %ld ms";
+"menu.thresholdChoice" = "%ld ms";
+"menu.launchAtLogin" = "Launch at Login";
+"menu.quit" = "Quit GlobeLangSwitch";

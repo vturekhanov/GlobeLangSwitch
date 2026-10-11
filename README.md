@@ -1,0 +1,95 @@
+# GlobeLangSwitch
+
+A tiny menu bar app for macOS that switches your keyboard layout the moment you tap (press and quickly release) the **Globe (🌐)** key.
+
+macOS can switch input sources with the Globe key by itself, but it can be slow: it sometimes puts a list of input sources in the middle of the screen and switches only after the list fades away. GlobeLangSwitch switches as soon as you release the key, in any app.
+
+## Requirements
+
+- macOS 13 Ventura or later, on a Mac with Apple silicon.
+- An Apple keyboard with the Globe key (🌐; on older keyboards it's labeled fn): the built-in one or a Magic Keyboard.
+
+## Installation
+
+### Download
+
+Ready-made builds are not available yet. For now, build the app from source.
+
+### Build from source
+
+You need the Xcode Command Line Tools. Open Terminal and, if they aren't installed yet, run:
+
+```bash
+xcode-select --install
+```
+
+Then go to the project folder and run:
+
+```bash
+./build.sh
+```
+
+This creates `build/GlobeLangSwitch.app`, signed ad hoc for the Mac it was built on. The script doesn't launch the app.
+
+When updating, quit the running copy first, and remove the old app instead of copying over it: macOS may refuse to launch a signed app that was overwritten in place. Dragging the app to Applications in Finder and choosing **Replace** works too.
+
+Copy the app to Applications. The first command removes a previous version, if there is one:
+
+```bash
+rm -rf /Applications/GlobeLangSwitch.app
+ditto build/GlobeLangSwitch.app /Applications/GlobeLangSwitch.app
+```
+
+To start the app, open the Applications folder in Finder and double-click **GlobeLangSwitch**. A globe icon appears in the menu bar. There is no Dock icon.
+
+## Setup
+
+Open **System Settings › Keyboard** and set **Press 🌐 key to** to **Do Nothing**.
+
+While it's set to anything else, an "!" sign appears next to the globe icon in the menu bar and the menu explains what to change.
+
+## Usage
+
+- **Tap the Globe key** to select the next input source.
+- **Hold the Globe key** longer than the tap threshold (default: 300 ms) and nothing happens.
+- **Use the Globe key with other keys** (arrows, Delete, F1–F12, media keys, or Shift, Control, Option, Command) and the shortcuts work as usual. The layout doesn't change.
+
+The menu bar menu has:
+
+- **Status**: Working, Paused, or Not receiving key events.
+- **Pause**: stops watching the keyboard completely until you resume.
+- **Launch at Login**: off by default. Turn it on to start GlobeLangSwitch automatically when you log in.
+- **Tap threshold**: from 100 to 500 ms, 300 ms by default.
+- **Quit GlobeLangSwitch**.
+
+## Privacy
+
+GlobeLangSwitch doesn't ask you to grant any additional permissions, such as Input Monitoring or Accessibility.
+
+It only receives changes of the modifier keys (Shift, Control, Option, Command, Caps Lock, Globe) and system-wide key counters, which tell how many keys were pressed but not which ones. That's enough to tell a lone tap of the Globe key from combinations with other keys. Keystrokes are never changed, blocked, stored, or logged, and the app never connects to the network. The only thing it saves is the tap threshold setting.
+
+Future versions of macOS may stop delivering these events. If that happens, the menu will show **Not receiving key events** and an "!" sign will appear next to the globe icon in the menu bar.
+
+## Limitations
+
+- **Open and Save dialogs.** If **Automatically switch to a document's input source** is on (System Settings › Keyboard › Input Sources › Edit…), the layout doesn't switch in these dialogs, because macOS restores the layout it remembers for them. Turn the setting off if this matters to you. The system shortcut ⌃⌥Space works there either way.
+- **Password fields.** macOS allows only layouts that type Latin characters there, so other layouts can't be selected.
+- **Caps Lock.** Switching the layout turns Caps Lock off. macOS does the same when it switches layouts itself.
+- **Indicator next to the text cursor.** Because of a macOS bug ([FB18799316](https://github.com/feedback-assistant/reports/issues/687)), this indicator can keep showing the previous layout after a background app switches it. As a workaround, GlobeLangSwitch moves keyboard focus to an invisible panel for an instant right after each switch and then gives it back, so the app you're typing in picks up the new layout.
+
+## Uninstall
+
+1. In the GlobeLangSwitch menu, turn off **Launch at Login** if you turned it on.
+2. Choose **Quit GlobeLangSwitch**.
+3. Move **GlobeLangSwitch** from the Applications folder to the Trash.
+4. Optionally, delete the saved tap threshold setting by running this command in Terminal:
+
+   ```bash
+   defaults delete org.turekhanov.GlobeLangSwitch
+   ```
+
+5. Optionally, open **System Settings › Keyboard** and set **Press 🌐 key to** back to the option you used before installing GlobeLangSwitch.
+
+## License
+
+[MIT](LICENSE)
