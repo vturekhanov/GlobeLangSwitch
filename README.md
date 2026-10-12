@@ -83,9 +83,9 @@ The menu bar menu has:
 
 GlobeLangSwitch doesn't ask you to grant any additional permissions, such as Input Monitoring or Accessibility.
 
-It only receives changes of the modifier keys (Shift, Control, Option, Command, Caps Lock, Globe) and system-wide key counters, which tell how many keys were pressed but not which ones. That's enough to tell a lone tap of the Globe key from combinations with other keys. Keystrokes are never changed, blocked, stored, or logged, and the app never connects to the network. It saves only its own settings.
+It only receives changes of the modifier keys (Shift, Control, Option, Command, Caps Lock, Globe) and system-wide key counters, which tell how many keys were pressed but not which ones. That's enough to tell a lone tap of the Globe key from combinations with other keys. Keystrokes are never changed, blocked, stored, or logged, and the app never connects to the network. It saves only its own settings, and they stay on your Mac. Step 4 of [Uninstall](#uninstall) explains how to delete them.
 
-GlobeLangSwitch runs in the App Sandbox, without access to the network or your files.
+GlobeLangSwitch runs in the App Sandbox, without access to the network or your files. It doesn't collect any personal data and doesn't share anything with anyone.
 
 ## Limitations
 
