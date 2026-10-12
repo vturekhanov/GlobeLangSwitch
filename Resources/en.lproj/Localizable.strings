@@ -7,6 +7,8 @@
 "status.paused" = "Paused";
 "status.noEvents" = "Not receiving key events";
 "status.noEventsHint" = "macOS may now require a permission";
+/* The first menu line: %1$@ is one of the three states above, %2$@ the app version */
+"status.withVersion" = "%1$@ · v%2$@";
 /* Shown next to the globe in the menu bar when something prevents normal work */
 "status.problemMark" = "!";
 
@@ -17,12 +19,17 @@
 "globe.mayReact" = "macOS may also react to 🌐";
 "globe.fix" = "Set System Settings › Keyboard › Press 🌐 key to › Do Nothing";
 
+/* Conflict with the system setting "Automatically switch to a document's input source" while Hide Layout Popup is on */
+"documentSource.conflict" = "macOS switches back to the document's input source";
+"documentSource.fix" = "Turn off System Settings › Keyboard › Input Sources › Edit… › Automatically switch to a document's input source";
+
 /* Launch at login */
 "login.approval" = "Allow GlobeLangSwitch in System Settings › General › Login Items";
 
 /* Menu commands. %ld is the threshold in milliseconds. */
 "menu.pause" = "Pause";
-"menu.threshold" = "Tap threshold: %ld ms";
+"menu.threshold" = "Tap Threshold: %ld ms";
 "menu.thresholdChoice" = "%ld ms";
 "menu.launchAtLogin" = "Launch at Login";
+"menu.hideLayoutPopup" = "Hide Layout Popup";
 "menu.quit" = "Quit GlobeLangSwitch";

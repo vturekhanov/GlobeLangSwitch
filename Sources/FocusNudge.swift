@@ -22,9 +22,17 @@ enum FocusNudge {
         return panel
     }()
 
-    static func perform() {
+    /// Runs `switchLayout` and nudges focus. Normally the switch comes first, while the app you type in
+    /// holds focus, so macOS shows the layout popup next to its text cursor. With `hidingPopup` the
+    /// switch runs while the panel holds focus: the panel has no text cursor, so no popup appears, and
+    /// TISSelectInputSource needs no access to the focused app's com.apple.tsm.portname. But with
+    /// "Automatically switch to a document's input source" on, the app restores its document's layout
+    /// when it gets focus back.
+    static func perform(hidingPopup: Bool, _ switchLayout: () -> Void) {
+        if !hidingPopup { switchLayout() }
         panel.orderFrontRegardless()
         panel.makeKey()
+        if hidingPopup { switchLayout() }
         panel.orderOut(nil)  // give focus back at once, so no keystroke can end up in the panel
     }
 }

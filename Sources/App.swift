@@ -1,4 +1,5 @@
 import AppKit
+import Security
 import ServiceManagement
 
 /// Menu-bar app: a globe icon with a menu; no Dock icon (LSUIElement in Info.plist).
@@ -14,6 +15,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private static let thresholdKey = "tapThresholdMs"
     private static let thresholdChoices = Array(stride(from: 100, through: 500, by: 50))
+    private static let hidePopupKey = "hideLayoutPopup"
+    private static let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
+
+    /// A sandboxed build without the com.apple.tsm.portname exception can switch only while
+    /// FocusNudge's panel holds focus, so it always hides the popup. Read from the app's own signature.
+    private static let popupAlwaysHidden: Bool = {
+        guard let task = SecTaskCreateFromSelf(nil) else { return false }
+        func entitlement(_ name: String) -> CFTypeRef? { SecTaskCopyValueForEntitlement(task, name as CFString, nil) }
+        let sandboxed = entitlement("com.apple.security.app-sandbox") as? Bool ?? false
+        let portNames = entitlement("com.apple.security.temporary-exception.mach-lookup.local-name") as? [String] ?? []
+        return sandboxed && !portNames.contains("com.apple.tsm.portname")
+    }()
 
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let detector = FnTapDetector()
@@ -21,6 +34,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var loginItemError: String?
 
     private var thresholdMs: Int { UserDefaults.standard.integer(forKey: Self.thresholdKey) }
+    private var hidesLayoutPopup: Bool { Self.popupAlwaysHidden || UserDefaults.standard.bool(forKey: Self.hidePopupKey) }
+    /// The popup is hidden, but the system setting makes apps undo the switch (see FocusNudge).
+    private var documentSourceConflict: Bool { hidesLayoutPopup && DocumentInputSourceSetting.isOn }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         UserDefaults.standard.register(defaults: [Self.thresholdKey: 300])
@@ -31,9 +47,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         statusItem.menu = menu
 
         applyThreshold()
-        detector.onTap = {
-            InputSources.selectNext()
-            FocusNudge.perform()
+        detector.onTap = { [unowned self] in
+            FocusNudge.perform(hidingPopup: hidesLayoutPopup, InputSources.selectNext)
         }
         detector.start()
 
@@ -58,6 +73,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(.separator())
         menu.addItem(commandItem("menu.pause", #selector(togglePause), checked: paused))
         menu.addItem(commandItem("menu.launchAtLogin", #selector(toggleLaunchAtLogin), checked: isLoginItem))
+        let hidePopup = commandItem("menu.hideLayoutPopup", #selector(toggleHideLayoutPopup), checked: hidesLayoutPopup)
+        hidePopup.isEnabled = !Self.popupAlwaysHidden
+        menu.addItem(hidePopup)
         menu.addItem(makeThresholdItem())
         menu.addItem(.separator())
         menu.addItem(withTitle: .localized("menu.quit"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
@@ -65,15 +83,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private func statusLines() -> [String] {
-        var lines: [String] = []
-        if paused {
-            lines.append(.localized("status.paused"))
-        } else if detector.isReceivingEvents {
-            lines.append(.localized("status.working"))
-        } else {
-            lines += [.localized("status.noEvents"), .localized("status.noEventsHint")]
-        }
+        let state: String = paused ? .localized("status.paused")
+            : detector.isReceivingEvents ? .localized("status.working") : .localized("status.noEvents")
+        var lines = [String(format: .localized("status.withVersion"), state, Self.version)]
+        if !paused && !detector.isReceivingEvents { lines.append(.localized("status.noEventsHint")) }
         if let conflict = SystemGlobeSetting.conflict { lines += [conflict, .localized("globe.fix")] }
+        if documentSourceConflict { lines += [.localized("documentSource.conflict"), .localized("documentSource.fix")] }
         if SMAppService.mainApp.status == .requiresApproval { lines.append(.localized("login.approval")) }
         if let loginItemError { lines.append(loginItemError) }
         return lines
@@ -117,6 +132,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         refreshIcon()
     }
 
+    @objc private func toggleHideLayoutPopup() {
+        UserDefaults.standard.set(!hidesLayoutPopup, forKey: Self.hidePopupKey)
+        refreshIcon()
+    }
+
     @objc private func chooseThreshold(_ item: NSMenuItem) {
         UserDefaults.standard.set(item.tag, forKey: Self.thresholdKey)
         applyThreshold()
@@ -142,7 +162,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// Dimmed while paused; "!" next to the globe when something prevents normal work.
     @objc private func refreshIcon() {
         guard let button = statusItem.button else { return }
-        let problem = !paused && (!detector.isReceivingEvents || SystemGlobeSetting.conflict != nil)
+        let problem = !paused && (!detector.isReceivingEvents || SystemGlobeSetting.conflict != nil || documentSourceConflict)
         button.appearsDisabled = paused
         button.title = problem ? .localized("status.problemMark") : ""
         button.imagePosition = problem ? .imageLeading : .imageOnly
