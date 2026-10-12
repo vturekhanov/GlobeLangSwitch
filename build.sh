@@ -14,11 +14,6 @@ plutil -lint -s Info.plist GlobeLangSwitch.entitlements Resources/*.lproj/*.stri
 cp Info.plist "$APP/Contents/"
 cp -R Resources/ "$APP/Contents/Resources/"
 
-# App icon, drawn by Icon/make-icon.swift.
-xcrun swiftc -swift-version 6 -warnings-as-errors -O -module-cache-path build/ModuleCache \
-    Icon/make-icon.swift -o build/make-icon
-build/make-icon "$APP/Contents/Resources/AppIcon.icns"
-
 xcrun swiftc -swift-version 6 -parse-as-library -warnings-as-errors -O \
     -target arm64-apple-macos13.0 -module-cache-path build/ModuleCache \
     -Xlinker -no_adhoc_codesign \
