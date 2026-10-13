@@ -1,13 +1,13 @@
 # GlobeLangSwitch
 
-A tiny menu bar app for macOS that switches your keyboard layout the moment you tap (press and quickly release) the **Globe (🌐)** key.
+A tiny menu bar app for macOS that switches your keyboard layout the moment you tap (press and quickly release) the **Globe** key (🌐︎).
 
 macOS can switch input sources with the Globe key by itself, but it can be slow: it sometimes puts a list of input sources in the middle of the screen and switches only after the list fades away. GlobeLangSwitch switches as soon as you release the key, in any app. Optionally, it can also switch without showing the layout popup next to the text cursor.
 
 ## Requirements
 
 - macOS 13 Ventura or later, on a Mac with Apple silicon.
-- An Apple keyboard with the Globe key (🌐; on older keyboards it's labeled fn): the built-in one or a Magic Keyboard.
+- An Apple keyboard with the Globe key (🌐︎; on older keyboards it's labeled fn): the built-in one or a Magic Keyboard.
 
 ## Installation
 
@@ -60,7 +60,7 @@ To start the app, open the Applications folder in Finder and double-click **Glob
 
 ## Setup
 
-Open **System Settings › Keyboard** and set **Press 🌐 key to** to **Do Nothing**.
+Open **System Settings › Keyboard** and set **Press 🌐︎ key to** to **Do Nothing**.
 
 While it's set to anything else, an "!" sign appears next to the globe icon in the menu bar and the menu explains what to change.
 
@@ -102,4 +102,4 @@ GlobeLangSwitch runs in the App Sandbox, without access to the network or your f
 2. Choose **Quit GlobeLangSwitch**.
 3. Move **GlobeLangSwitch** from the Applications folder to the Trash.
 4. Optionally, delete the saved settings: in Finder, choose **Go › Go to Folder…**, enter `~/Library/Containers`, and move the **GlobeLangSwitch** folder to the Trash.
-5. Optionally, open **System Settings › Keyboard** and set **Press 🌐 key to** back to the option you used before installing GlobeLangSwitch.
+5. Optionally, open **System Settings › Keyboard** and set **Press 🌐︎ key to** back to the option you used before installing GlobeLangSwitch.
