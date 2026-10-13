@@ -2,7 +2,7 @@
 
 A tiny menu bar app for macOS that switches your keyboard layout the moment you tap (press and quickly release) the **Globe (🌐)** key.
 
-macOS can switch input sources with the Globe key by itself, but it can be slow: it sometimes puts a list of input sources in the middle of the screen and switches only after the list fades away. GlobeLangSwitch switches as soon as you release the key, in any app.
+macOS can switch input sources with the Globe key by itself, but it can be slow: it sometimes puts a list of input sources in the middle of the screen and switches only after the list fades away. GlobeLangSwitch switches as soon as you release the key, in any app. Optionally, it can also switch without showing the layout popup next to the text cursor.
 
 ## Requirements
 
