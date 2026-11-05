@@ -2,7 +2,7 @@ import AppKit
 
 /// Works around a macOS bug: after a layout switch made by a background app (TISSelectInputSource),
 /// the indicator next to the text cursor shows the previous layout on the following switches.
-/// Moving keyboard focus to an invisible panel and straight back makes the focused app resync its
+/// Moving keyboard focus to an invisible panel and back makes the focused app resync its
 /// input state, as opening and closing a menu does. The app itself is never activated.
 @MainActor
 enum FocusNudge {
@@ -22,17 +22,31 @@ enum FocusNudge {
         return panel
     }()
 
+    /// How long the panel keeps focus after a switch made while it holds focus (`hidingPopup`). The app
+    /// you type in learns about that switch only by losing focus and getting it back. Seen on macOS 27.2:
+    /// when focus came straight back, the app sometimes kept typing in the old layout. A key pressed
+    /// during this time goes to the panel and is lost.
+    private static let hiddenSwitchFocusTime: Duration = .milliseconds(50)
+
     /// Runs `switchLayout` and nudges focus. Normally the switch comes first, while the app you type in
-    /// holds focus, so macOS shows the layout popup next to its text cursor. With `hidingPopup` the
-    /// switch runs while the panel holds focus: the panel has no text cursor, so no popup appears, and
-    /// TISSelectInputSource needs no access to the focused app's com.apple.tsm.portname. But with
-    /// "Automatically switch to a document's input source" on, the app restores its document's layout
-    /// when it gets focus back.
+    /// holds focus, so macOS shows the layout popup next to its text cursor, and focus comes back at
+    /// once, so no keystroke can end up in the panel. With `hidingPopup` the switch runs while the panel
+    /// holds focus: the panel has no text cursor, so no popup appears, and TISSelectInputSource needs
+    /// no access to the focused app's com.apple.tsm.portname. The panel then keeps focus for
+    /// `hiddenSwitchFocusTime`. But with "Automatically switch to a document's input source" on, the
+    /// app restores its document's layout when it gets focus back.
     static func perform(hidingPopup: Bool, _ switchLayout: () -> Void) {
         if !hidingPopup { switchLayout() }
         panel.orderFrontRegardless()
         panel.makeKey()
-        if hidingPopup { switchLayout() }
-        panel.orderOut(nil)  // give focus back at once, so no keystroke can end up in the panel
+        guard hidingPopup else {
+            panel.orderOut(nil)
+            return
+        }
+        switchLayout()
+        Task {
+            try? await Task.sleep(for: hiddenSwitchFocusTime)
+            panel.orderOut(nil)
+        }
     }
 }

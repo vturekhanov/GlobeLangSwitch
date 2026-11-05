@@ -178,6 +178,7 @@
 			buildSettings = {
 				ARCHS = arm64;
 				CODE_SIGN_ENTITLEMENTS = GlobeLangSwitch.entitlements;
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4QNR2DRQ3R;
 				ENABLE_HARDENED_RUNTIME = YES;
