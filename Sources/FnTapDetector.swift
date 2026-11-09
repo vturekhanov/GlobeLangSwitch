@@ -75,13 +75,25 @@ final class FnTapDetector {
         } else if let downAt = fnDownAt {
             fnDownAt = nil
             let isShort = time - downAt < threshold
-            let noOtherKeys = Self.comboCounts() == comboCountsAtFnDown && !Self.comboPressed(after: downAt, before: time)
+            let noOtherKeys = !Self.comboCounted(since: comboCountsAtFnDown, after: downAt)
+                && !Self.comboPressed(after: downAt, before: time)
             if isShort && noOtherKeys && !combined && !withOtherModifier { onTap() }
         }
     }
 
     private static func comboCounts() -> [UInt32] {
         comboEventTypes.map { CGEventSource.counterForEventType(.hidSystemState, eventType: $0) }
+    }
+
+    /// Whether a combo key counted since fn went down was pressed after fn went down. macOS 27.2 counts
+    /// a press, and updates its last-press time, about half a second late, so a key pressed shortly
+    /// before fn is often counted while fn is held. Its last-press time then shows it came before fn.
+    private static func comboCounted(since countsAtDown: [UInt32], after downAt: TimeInterval) -> Bool {
+        let now = ProcessInfo.processInfo.systemUptime
+        return zip(comboEventTypes, zip(comboCounts(), countsAtDown)).contains { type, counts in
+            counts.0 != counts.1
+                && now - CGEventSource.secondsSinceLastEventType(.hidSystemState, eventType: type) >= downAt
+        }
     }
 
     /// Whether a combo key was pressed while fn was held, judged by the latest press of each kind
