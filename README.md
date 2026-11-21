@@ -2,7 +2,7 @@
 
 A tiny menu bar app for macOS that switches your keyboard layout the moment you tap (press and quickly release) the **Globe** key (🌐︎).
 
-macOS can switch input sources with the Globe key by itself, but it can be slow: it sometimes puts a list of input sources in the middle of the screen and switches only after the list fades away. GlobeLangSwitch switches as soon as you release the key, in any app. Optionally, it can also switch without showing the layout popup next to the text cursor.
+macOS can switch input sources with the Globe key by itself, but it can be slow: it sometimes shows a list of input sources in the middle of the screen and switches only after the list fades away. GlobeLangSwitch switches as soon as you release the key. Optionally, it can also switch without showing the layout popup next to the text cursor.
 
 ## Requirements
 
@@ -62,7 +62,7 @@ To start the app, open the Applications folder in Finder and double-click **Glob
 
 Open **System Settings › Keyboard** and set **Press 🌐︎ key to** to **Do Nothing**.
 
-While it's set to anything else, an "!" sign appears next to the globe icon in the menu bar and the menu explains what to change.
+While it's set to anything else, an exclamation mark appears next to the globe icon in the menu bar and the menu explains what to change.
 
 ## Usage
 
@@ -92,9 +92,9 @@ GlobeLangSwitch runs in the App Sandbox, without access to the network or your f
 - **Open and Save dialogs.** If **Automatically switch to a document's input source** is on (System Settings › Keyboard › Input Sources › Edit…), the layout doesn't switch in these dialogs, because macOS restores the layout it remembers for them. Turn the setting off if this matters to you. The system shortcut ⌃⌥Space works there either way.
 - **Password fields.** macOS allows only layouts that type Latin characters there, so other layouts can't be selected.
 - **Caps Lock.** Switching the layout turns Caps Lock off. macOS does the same when it switches layouts itself.
-- **Layout popup next to the text cursor.** Because of a macOS bug ([FB18799316](https://github.com/feedback-assistant/reports/issues/687)), this popup can keep showing the previous layout after a background app switches it. As a workaround, GlobeLangSwitch moves keyboard focus to an invisible panel for an instant right after each switch and then gives it back, so the app you're typing in picks up the new layout.
-- **Hide Layout Popup.** It doesn't work together with **Automatically switch to a document's input source** (System Settings › Keyboard › Input Sources › Edit…): the layout switches back at once. While both are on, an "!" sign appears next to the globe icon in the menu bar and the menu explains what to change.
-- **Future macOS versions.** GlobeLangSwitch relies on macOS sending it modifier key changes and key counters without any extra permissions. A future version of macOS may stop sending them. If that happens, the menu will show **Not receiving key events** and an "!" sign will appear next to the globe icon in the menu bar.
+- **Layout popup next to the text cursor.** Because of a macOS bug ([FB18799316](https://github.com/feedback-assistant/reports/issues/687)), this popup can keep showing the previous layout after a background app switches it. As a workaround, GlobeLangSwitch moves keyboard focus to an invisible panel for an instant right after each switch and then returns it, so the app you're typing in picks up the new layout.
+- **Hide Layout Popup.** It doesn't work together with **Automatically switch to a document's input source** (System Settings › Keyboard › Input Sources › Edit…): the layout immediately switches back. While both are on, an exclamation mark appears next to the globe icon in the menu bar and the menu explains what to change.
+- **Future macOS versions.** GlobeLangSwitch relies on macOS sending it modifier key changes and key counters without any extra permissions. A future version of macOS may stop sending them. If that happens, the menu will show **Not receiving key events** and an exclamation mark will appear next to the globe icon in the menu bar.
 
 ## Uninstall
 
